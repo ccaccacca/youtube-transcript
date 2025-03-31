@@ -3,6 +3,7 @@ import os
 import requests
 from flask import Flask, request, jsonify, Response
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound, VideoUnavailable
+from youtube_transcript_api.proxies import WebshareProxyConfig
 from flask_cors import CORS
 
 # Configure logging
@@ -19,6 +20,14 @@ CORS(app)
 # Add configuration for production
 app.config['JSON_SORT_KEYS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
+
+# Configure YouTube Transcript API with proxy
+ytt_api = YouTubeTranscriptApi(
+    proxy_config=WebshareProxyConfig(
+        proxy_username="quoofpkh",
+        proxy_password="k481zfbrv2ki",
+    )
+)
 
 def format_time(seconds, format_type="srt"):
     """Formats time to HH:MM:SS,MMM (SRT) or HH:MM:SS.MMM (TXT)."""
@@ -79,7 +88,7 @@ def get_transcript():
         return jsonify({"error": "Invalid format. Use 'txt' or 'srt'."}), 400
 
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(video_id)
+        transcript = ytt_api.get_transcript(video_id)
         content = format_transcript(transcript, format_type)
         filename = f"transcript.{format_type}"
 
