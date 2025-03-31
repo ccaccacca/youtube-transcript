@@ -1,7 +1,7 @@
 import logging
 import os
 import requests
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, render_template
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound, VideoUnavailable
 from youtube_transcript_api.proxies import WebshareProxyConfig
 from flask_cors import CORS
@@ -54,21 +54,8 @@ def format_transcript(transcript, format_type="txt"):
 
 @app.route('/', methods=['GET'])
 def home():
-    """Root endpoint with API documentation."""
-    return jsonify({
-        "name": "YouTube Transcript API",
-        "version": "1.0.0",
-        "endpoints": {
-            "/status": "Health check endpoint",
-            "/transcript": {
-                "method": "GET",
-                "params": {
-                    "videoId": "YouTube video ID (required)",
-                    "format": "Output format: 'txt' or 'srt' (optional, default: txt)"
-                }
-            }
-        }
-    })
+    """Serve the main page."""
+    return render_template('index.html')
 
 @app.route('/status', methods=['GET'])
 def status():
